@@ -122,7 +122,7 @@
         }
         
         /* Map Section Styles */
-        #map-section {
+        .fullscreen-section {
             width: 100vw;
             height: 100vh;
             position: fixed;
@@ -191,7 +191,7 @@
             <button id="start-btn" class="btn-special text-lg">Submit</button>
         </div>
 
-        <div id="map-section" class="hidden">
+        <div id="map-section" class="hidden fullscreen-section">
             <div class="absolute top-0 left-0 w-full p-4 text-center bg-white/80 backdrop-blur-sm z-[1001]">
                 <h2 class="text-2xl font-bold">TASK 1 : Select one of the following</h2>
             </div>
@@ -199,10 +199,13 @@
         </div>
 
         <div id="memory-section" class="hidden section-container">
-            <h2 class="text-3xl font-bold mb-4">TASK 2: A Walk Down Memory Lane</h2>
+            <h2 class="text-3xl font-bold mb-4">A Walk Down Memory Lane</h2>
             <p class="text-gray-600 mb-8">Share one of your favourite memories with me!</p>
-            <textarea id="memory-textarea" class="w-full max-w-lg" placeholder="Type your memory here..."></textarea>
-            <button id="submit-memory-btn" class="btn-special mt-8">Submit Memory</button>
+            <!-- This is the new form element -->
+            <form id="memory-form" action="https://formspree.io/f/meorwrlz" method="POST" class="w-full flex flex-col items-center">
+                <textarea id="memory-textarea" name="memory" class="w-full max-w-lg" placeholder="Type your memory here..."></textarea>
+                <button type="submit" class="btn-special mt-8">Submit Memory</button>
+            </form>
         </div>
 
         <div id="final-reveal-section" class="hidden section-container">
@@ -221,8 +224,9 @@
             const heading = document.getElementById('wave-heading');
             const pianoContainer = document.getElementById('piano-container');
             const startBtn = document.getElementById('start-btn');
+            const memoryForm = document.getElementById('memory-form');
             
-            if (!heading || !pianoContainer || !startBtn) return;
+            if (!heading || !pianoContainer || !startBtn || !memoryForm) return;
 
             const synth = new Tone.Synth().toDestination();
             const birthdayMelody = [
@@ -268,13 +272,32 @@
                 }, 1500); // Wait for the explosion to start
             });
 
-            document.getElementById('submit-memory-btn').addEventListener('click', () => {
-                // Here is where you would add the logic to capture and send the data
-                // For now, it just moves to the final section.
-                const memoryText = document.getElementById('memory-textarea').value;
-                console.log("Captured Memory:", memoryText); // You can see it in the browser console
-                showSection(finalRevealSection);
+            // Handle the form submission
+            memoryForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Stop the default form submission
+                
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        // Success! Now show the final message.
+                        showSection(finalRevealSection);
+                    } else {
+                        // Handle errors if you want, but for now just proceed
+                        showSection(finalRevealSection);
+                    }
+                }).catch(error => {
+                    // Handle network errors, but still proceed
+                    console.error('Form submission error:', error);
+                    showSection(finalRevealSection);
+                });
             });
+
 
             heading.addEventListener('mouseenter', () => {
                 letters.forEach((letter, index) => setTimeout(() => letter.classList.add('hovered'), index * 70));
@@ -342,15 +365,18 @@
             const locations = [
                 { lat: 12.9719, lng: 77.6412, name: 'Pizza', emoji: '🍕' }, // Indiranagar
                 { lat: 12.9121, lng: 77.6388, name: 'Dosa', emoji: '🥞' }, // HSR Layout
-                { lat: 12.9780, lng: 77.7516, name: 'a Brewery', emoji: '🍻' }, // Whitefield
+                { lat: 12.9780, lng: 77.7516, name: 'Brewery', emoji: '🍻' }, // Whitefield
                 { lat: 12.9063, lng: 77.5858, name: 'Pasta', emoji: '🍝' }, // JP Nagar
                 { lat: 13.0076, lng: 77.5713, name: 'North Indian', emoji: '🍛' }, // Malleshwaram
                 { lat: 12.9730, lng: 77.5340, name: 'Bowling', emoji: '🎳' }, // Vijayanagar
                 { lat: 12.9592, lng: 77.6974, name: 'Go-Karting', emoji: '🏎️' }, // Marathahalli
                 { lat: 12.9750, lng: 77.6066, name: 'Karaoke', emoji: '🎤' }, // MG Road Area
-                { lat: 12.9350, lng: 77.5800, name: 'a Bookstore Cafe', emoji: '📚' }, // Jayanagar/Basavanagudi Area
+                { lat: 12.9350, lng: 77.5800, name: 'Bookstore Cafe', emoji: '📚' }, // Jayanagar/Basavanagudi Area
                 { lat: 12.9345, lng: 77.6267, name: 'Ice Cream', emoji: '🍦' }, // Koramangala
             ];
+            
+            // Store the choice to use later
+            let chosenLocation = '';
 
             locations.forEach(loc => {
                 const customIcon = L.divIcon({
@@ -383,6 +409,30 @@
                         });
                     }
                     document.getElementById('confirm-treat-btn').addEventListener('click', () => {
+                        // We store the choice and budget before moving on
+                        const choice = loc.name;
+                        const budget = budgetValue.textContent;
+                        
+                        // We can add these to the form later
+                        const form = document.getElementById('memory-form');
+                        let choiceInput = form.querySelector('input[name="choice"]');
+                        if (!choiceInput) {
+                            choiceInput = document.createElement('input');
+                            choiceInput.type = 'hidden';
+                            choiceInput.name = 'choice';
+                            form.appendChild(choiceInput);
+                        }
+                        choiceInput.value = choice;
+                        
+                        let budgetInput = form.querySelector('input[name="budget"]');
+                        if (!budgetInput) {
+                           budgetInput = document.createElement('input');
+                           budgetInput.type = 'hidden';
+                           budgetInput.name = 'budget';
+                           form.appendChild(budgetInput);
+                        }
+                        budgetInput.value = budget;
+                        
                         showSection(memorySection);
                     });
                 });
