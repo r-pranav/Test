@@ -9,8 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Lobster&display=swap" rel="stylesheet">
-    <!-- LeafletJS for the map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- LeafletJS for the map --><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
         .display-font {
@@ -63,6 +62,11 @@
         .btn-special:hover {
             background-color: #1d4ed8; /* A slightly darker blue on hover */
             transform: scale(1.03);
+        }
+        .btn-special:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            transform: scale(1);
         }
         input[type="text"], input[type="password"], textarea {
             background-color: transparent;
@@ -162,6 +166,72 @@
             background: #2563eb;
             cursor: pointer;
         }
+
+        /* Lyrics Puzzle Styles */
+         #lyrics-section.section-container {
+            position: relative;
+            overflow: hidden;
+            background-color: #1a202c;
+            padding: 0;
+        }
+        .lyrics-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            filter: blur(4px) brightness(0.4);
+            transform: scale(1.1);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .lyrics-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .puzzle-content-overlay {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        #lyrics-section input[type="text"] {
+            color: #ffffff;
+            border-bottom-color: #60a5fa;
+        }
+        #lyrics-section input[type="text"]:focus {
+            border-bottom-color: #ffffff;
+        }
+        #lyrics-section ::placeholder {
+            color: #a0aec0;
+        }
+
+        /* Book Cover Puzzle Styles */
+        #book-cover-img {
+            filter: blur(4px); /* Lowered blur to 4px */
+            transition: filter 0.3s ease-in-out;
+        }
+        #book-cover-img.unblurred {
+            filter: blur(0); /* Remove blur when answer is correct */
+        }
+        
+        /* Gossip word count styles */
+        #word-count {
+            color: #ef4444; /* Red */
+            font-weight: bold;
+        }
+        #word-count.met {
+            color: #22c55e; /* Green */
+        }
     </style>
 </head>
 <body class="p-4">
@@ -198,11 +268,48 @@
             <div id="map"></div>
         </div>
 
+        <div id="lyrics-section" class="hidden section-container">
+            <div class="lyrics-bg">
+                <img src="https://placehold.co/600x400/333/FFF?text=reputation" alt="Hint image 1">
+                <img src="https://placehold.co/600x400/555/FFF?text=1989" alt="Hint image 2">
+                <img src="https://placehold.co/600x400/222/FFF?text=Midnights" alt="Hint image 3">
+                <img src="https://placehold.co/600x400/444/FFF?text=Lover" alt="Hint image 4">
+            </div>
+            <div class="puzzle-content-overlay">
+                <h2 class="text-3xl font-bold text-white mb-4">TASK 2: Mother is mothering!</h2>
+                <div class="text-gray-200 mb-8 italic text-center max-w-md">
+                    
+                    <p> Taylor ji ka recently happy engagement hua hai, toh ussi khushi mein guess which song is this ( PS : your favourite it is or was ) ohh and also first guess galat karo please </p>
+                    <p>'Cause my baby's fit like a daydream, walkin' with his head down, I'm the one he's walkin' to...</p>
+                    <p class="mt-2">My baby's fly like a jet stream, high above the whole scene, loves me like I'm brand new...</p>
+                </div>
+                <input type="text" id="lyrics-input" placeholder="Enter song title...">
+                <p id="lyrics-error" class="text-red-400 mt-4 h-6"></p>
+                <button id="lyrics-submit-btn" class="btn-special mt-8">Submit Answer</button>
+            </div>
+        </div>
+
+        <div id="book-section" class="hidden section-container">
+            <h2 class="text-3xl font-bold mb-4">TASK 3: Guess Karooo!</h2>
+            <img id="book-cover-img" src="https://m.media-amazon.com/images/I/81IzbD2IiIL.jpg" alt="Book cover of The Kite Runner (blurred)" class="rounded-lg shadow-lg mb-6 h-64">
+            <p class="text-gray-600 mb-8 max-w-md">They say never to judge a book by its cover (but you did judge me) but ussi spirit mein guess which book this is ? </p>
+            <input type="text" id="book-title-input" placeholder="Book Title...">
+            <p id="book-error" class="text-red-400 mt-4 h-6"></p>
+            <button id="book-submit-btn" class="btn-special mt-8">Submit Guess</button>
+        </div>
+
+        <div id="gossip-section" class="hidden section-container">
+            <h2 class="text-3xl font-bold mb-4">TASK 4: Spill the Teaaaaaa !! </h2>
+            <p class="text-gray-600 mb-6 max-w-md">Alright, birthday girl. The price of admission to the final stage is the juiciest piece of gossip you've heard recently. Don't hold back!</p>
+            <textarea id="gossip-textarea" class="w-full max-w-lg" placeholder="The tea is..."></textarea>
+            <p id="word-count" class="mt-2 text-sm">0 / 100 words</p>
+            <button id="gossip-submit-btn" class="btn-special mt-6" disabled>Submit Gossip</button>
+        </div>
+
         <div id="memory-section" class="hidden section-container">
-            <h2 class="text-3xl font-bold mb-4">A Walk Down Memory Lane</h2>
+            <h2 class="text-3xl font-bold mb-4">FINAL TASK: A Walk Down Memory Lane</h2>
             <p class="text-gray-600 mb-8">Share one of your favourite memories with me!</p>
-            <!-- This is the new form element -->
-            <form id="memory-form" action="https://formspree.io/f/meorwrlz" method="POST" class="w-full flex flex-col items-center">
+            <form id="memory-form" action="https://formspree.io/f/YOUR_UNIQUE_ID" method="POST" class="w-full flex flex-col items-center">
                 <textarea id="memory-textarea" name="memory" class="w-full max-w-lg" placeholder="Type your memory here..."></textarea>
                 <button type="submit" class="btn-special mt-8">Submit Memory</button>
             </form>
@@ -211,9 +318,8 @@
         <div id="final-reveal-section" class="hidden section-container">
              <h1 class="display-font text-5xl md-text-6xl font-normal text-blue-700 mb-6">Adventure Complete</h1>
              <div class="text-left-aligned text-gray-700 text-lg space-y-5 max-w-lg">
-                <p>Happy Birthday to a truly remarkable person It is a gift to know you and call you a friend</p>
-                <p>May your year ahead be filled with the same joy and inspiration you bring to everyone around you You deserve every success and happiness</p>
-                <p>This was just a small token to celebrate you Here's to another year of great memories</p>
+                <p>Happy Birthday sweet chilli 🌶 , It is sachi muchi a gift to know you and call you a friend.Sorry for making you do tasks on your birthday hehe. The last year with you was absolutely wonderful on every scale possible. I may have gone from a 9 to 4 and now back to 9 😂 but I wouldn't have wanted it any way else, lest the memories we shared wouldn't have transpired. The way you have grown as a person is truly special, killing the absolute shit as an intern, convenor, student and as a person. I hope you find what it is you are seeking for. Thank you for being in my life, tis the best gift I have ever hath </p>
+                <p>May your year ahead be filled with the same joy and inspiration you bring to everyone around you. You deserve every success and happiness ♥ </p>
                 <p class="font-bold text-right mt-8">- Your Friend</p>
               </div>
         </div>
@@ -225,30 +331,33 @@
             const pianoContainer = document.getElementById('piano-container');
             const startBtn = document.getElementById('start-btn');
             const memoryForm = document.getElementById('memory-form');
-            
-            if (!heading || !pianoContainer || !startBtn || !memoryForm) return;
+            const lyricsSubmitBtn = document.getElementById('lyrics-submit-btn');
+            const bookSubmitBtn = document.getElementById('book-submit-btn');
+            const gossipSubmitBtn = document.getElementById('gossip-submit-btn');
+            const gossipTextarea = document.getElementById('gossip-textarea');
+            const wordCountDisplay = document.getElementById('word-count');
 
+            
+            if (!heading || !pianoContainer || !startBtn || !memoryForm || !lyricsSubmitBtn || !bookSubmitBtn || !gossipSubmitBtn) return;
+
+            // ... (piano and wave logic remains the same) ...
             const synth = new Tone.Synth().toDestination();
             const birthdayMelody = [
                 { note: 'C4', duration: '4n' }, { note: 'C4', duration: '4n' },
                 { note: 'D4', duration: '4n' }, { note: 'C4', duration: '4n' },
                 { note: 'F4', duration: '4n' }, { note: 'E4', duration: '2n' }
             ];
-            
             const sequence = new Tone.Sequence((time, event) => {
                 synth.triggerAttackRelease(event.note, event.duration, time);
                 const noteLetter = event.note.slice(0, -1);
                 const keyElement = document.querySelector(`.key[data-note='${noteLetter}']`);
                 if (keyElement) {
                     keyElement.classList.add('playing');
-                    Tone.Transport.scheduleOnce(() => {
-                        keyElement.classList.remove('playing');
-                    }, time + Tone.Time(event.duration).toSeconds() - 0.05);
+                    Tone.Transport.scheduleOnce(() => keyElement.classList.remove('playing'), time + Tone.Time(event.duration).toSeconds() - 0.05);
                 }
             }, birthdayMelody).start(0);
-
             const text = heading.textContent;
-            heading.innerHTML = ''; 
+            heading.innerHTML = '';
             text.split('').forEach(char => {
                 const span = document.createElement('span');
                 span.className = 'wave-letter';
@@ -256,12 +365,23 @@
                 heading.appendChild(span);
             });
             const letters = heading.querySelectorAll('.wave-letter');
-            
             const displayedNotes = ['C', 'D', 'E', 'F'];
             const keys = document.querySelectorAll('.key');
             keys.forEach(key => {
                 if (displayedNotes.includes(key.dataset.note)) key.classList.add('highlight');
             });
+            heading.addEventListener('mouseenter', () => {
+                letters.forEach((letter, index) => setTimeout(() => letter.classList.add('hovered'), index * 70));
+                pianoContainer.classList.add('visible');
+                if (Tone.context.state === 'running') Tone.Transport.start();
+            });
+            heading.addEventListener('mouseleave', () => {
+                letters.forEach((letter, index) => setTimeout(() => letter.classList.remove('hovered'), index * 70));
+                pianoContainer.classList.remove('visible');
+                Tone.Transport.stop();
+                Tone.Transport.position = 0;
+            });
+
 
             startBtn.addEventListener('click', () => {
                 if (Tone.context.state !== 'running') Tone.start();
@@ -269,47 +389,88 @@
                 setTimeout(() => {
                     showSection(mapSection);
                     initMap();
-                }, 1500); // Wait for the explosion to start
+                }, 1500);
             });
 
-            // Handle the form submission
-            memoryForm.addEventListener('submit', function(e) {
-                e.preventDefault(); // Stop the default form submission
+            // Handle Lyrics Puzzle Submission
+            lyricsSubmitBtn.addEventListener('click', () => {
+                const lyricsInput = document.getElementById('lyrics-input');
+                const lyricsError = document.getElementById('lyrics-error');
+                const userAnswer = lyricsInput.value.trim().toLowerCase();
+                if (userAnswer === 'call it what you want') {
+                    showSection(bookSection);
+                } else {
+                    lyricsError.textContent = "Not quite! Try again, Swiftie!";
+                }
+            });
+
+            // Handle Book Puzzle Submission
+            bookSubmitBtn.addEventListener('click', () => {
+                const bookTitleInput = document.getElementById('book-title-input');
+                const bookError = document.getElementById('book-error');
+                const bookCoverImg = document.getElementById('book-cover-img');
+                const userAnswer = bookTitleInput.value.trim().toLowerCase();
+
+                if (userAnswer.includes('the kite runner') || userAnswer.includes('kiterunner')) {
+                    bookCoverImg.classList.add('unblurred');
+                    bookError.textContent = "That's correct! Great job!";
+                    setTimeout(() => {
+                        showSection(gossipSection); // Go to new Gossip puzzle
+                    }, 1500);
+                } else {
+                    bookError.textContent = "Hmm, not quite. Take another look!";
+                }
+            });
+
+            // Handle Gossip Word Count
+            gossipTextarea.addEventListener('input', () => {
+                const text = gossipTextarea.value.trim();
+                const words = text.split(/\s+/).filter(word => word.length > 0);
+                const wordCount = words.length;
+
+                wordCountDisplay.textContent = `${wordCount} / 100 words`;
+
+                if (wordCount >= 100) {
+                    gossipSubmitBtn.disabled = false;
+                    wordCountDisplay.classList.add('met');
+                } else {
+                    gossipSubmitBtn.disabled = true;
+                    wordCountDisplay.classList.remove('met');
+                }
+            });
+
+            // Handle Gossip Submission
+            gossipSubmitBtn.addEventListener('click', () => {
+                const gossipText = gossipTextarea.value;
+                const form = document.getElementById('memory-form');
                 
+                let gossipInput = form.querySelector('input[name="gossip"]');
+                if (!gossipInput) {
+                    gossipInput = document.createElement('input');
+                    gossipInput.type = 'hidden';
+                    gossipInput.name = 'gossip';
+                    form.appendChild(gossipInput);
+                }
+                gossipInput.value = gossipText;
+
+                showSection(memorySection);
+            });
+
+
+            // Handle the final form submission
+            memoryForm.addEventListener('submit', function(e) {
+                e.preventDefault();
                 const formData = new FormData(this);
                 fetch(this.action, {
                     method: 'POST',
                     body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                    headers: { 'Accept': 'application/json' }
                 }).then(response => {
-                    if (response.ok) {
-                        // Success! Now show the final message.
-                        showSection(finalRevealSection);
-                    } else {
-                        // Handle errors if you want, but for now just proceed
-                        showSection(finalRevealSection);
-                    }
+                    showSection(finalRevealSection);
                 }).catch(error => {
-                    // Handle network errors, but still proceed
                     console.error('Form submission error:', error);
                     showSection(finalRevealSection);
                 });
-            });
-
-
-            heading.addEventListener('mouseenter', () => {
-                letters.forEach((letter, index) => setTimeout(() => letter.classList.add('hovered'), index * 70));
-                pianoContainer.classList.add('visible');
-                if (Tone.context.state === 'running') Tone.Transport.start();
-            });
-
-            heading.addEventListener('mouseleave', () => {
-                letters.forEach((letter, index) => setTimeout(() => letter.classList.remove('hovered'), index * 70));
-                pianoContainer.classList.remove('visible');
-                Tone.Transport.stop();
-                Tone.Transport.position = 0;
             });
         });
 
@@ -332,7 +493,7 @@
                 
                 particle.style.left = `${Math.random() * 100}vw`;
                 particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.animationDuration = `${Math.random() * 2 + 3}s`; // 3 to 5 seconds
+                particle.style.animationDuration = `${Math.random() * 2 + 3}s`;
                 particle.style.animationDelay = `${Math.random() * 0.5}s`;
                 
                 container.appendChild(particle);
@@ -342,11 +503,14 @@
 
         const welcomeSection = document.getElementById('welcome-section');
         const mapSection = document.getElementById('map-section');
+        const lyricsSection = document.getElementById('lyrics-section');
+        const bookSection = document.getElementById('book-section');
+        const gossipSection = document.getElementById('gossip-section');
         const memorySection = document.getElementById('memory-section');
         const finalRevealSection = document.getElementById('final-reveal-section');
         
         function showSection(sectionToShow) {
-            [welcomeSection, mapSection, memorySection, finalRevealSection].forEach(section => section.classList.add('hidden'));
+            [welcomeSection, mapSection, lyricsSection, bookSection, gossipSection, memorySection, finalRevealSection].forEach(section => section.classList.add('hidden'));
             sectionToShow.classList.remove('hidden');
             sectionToShow.classList.add('fade-in');
         }
@@ -375,9 +539,6 @@
                 { lat: 12.9345, lng: 77.6267, name: 'Ice Cream', emoji: '🍦' }, // Koramangala
             ];
             
-            // Store the choice to use later
-            let chosenLocation = '';
-
             locations.forEach(loc => {
                 const customIcon = L.divIcon({
                     html: `<div class="text-4xl">${loc.emoji}</div>`,
@@ -409,11 +570,9 @@
                         });
                     }
                     document.getElementById('confirm-treat-btn').addEventListener('click', () => {
-                        // We store the choice and budget before moving on
                         const choice = loc.name;
                         const budget = budgetValue.textContent;
                         
-                        // We can add these to the form later
                         const form = document.getElementById('memory-form');
                         let choiceInput = form.querySelector('input[name="choice"]');
                         if (!choiceInput) {
@@ -433,7 +592,7 @@
                         }
                         budgetInput.value = budget;
                         
-                        showSection(memorySection);
+                        showSection(lyricsSection);
                     });
                 });
             });
