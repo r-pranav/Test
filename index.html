@@ -1,601 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Very Happy Birthday Ruta</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Lobster&display=swap" rel="stylesheet">
-    <!-- LeafletJS for the map --><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <style>
-        .display-font {
-            font-family: 'Lobster', cursive;
-        }
-        body {
-            font-family: 'Lato', sans-serif;
-            background-color: #e0f2f7; /* Light blueish background */
-            color: #1a202c; /* Darker text for contrast */
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="party" width="100" height="100" patternUnits="userSpaceOnUse"><path fill="%23d0e9f1" d="M10 0 L10 10 L0 10 L0 0 Z M30 20 L30 30 L20 30 L20 20 Z M50 40 L50 50 L40 50 L40 40 Z M70 60 L70 70 L60 70 L60 60 Z M90 80 L90 90 L80 90 L80 80 Z M10 90 L10 100 L0 100 L0 90 Z M30 70 L30 80 L20 80 L20 70 Z M50 50 L50 60 L40 60 L40 50 Z M70 30 L70 40 L60 40 L60 30 Z M90 10 L90 20 L80 20 L80 10 Z" /><circle fill="%23ffeb3b" cx="15" cy="5" r="3"/><circle fill="%23f48fb1" cx="35" cy="25" r="3"/><circle fill="%23a7ffeb" cx="55" cy="45" r="3"/><circle fill="%238c9eff" cx="75" cy="65" r="3"/><circle fill="%23b39ddb" cx="95" cy="85" r="3"/></pattern></defs><rect width="100%" height="100%" fill="url(%23party)"/></svg>');
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
-        }
-        .section-container {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            max-width: 768px; /* Slightly wider for better text flow */
-            margin: auto;
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white card for readability */
-            padding: 40px 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        .hidden {
-            display: none;
-        }
-        .fade-in {
-            animation: fadeIn 1.5s ease-in-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .btn-special {
-            background-color: #2563eb; /* A strong blue */
-            color: #ffffff;
-            font-weight: 500;
-            padding: 12px 28px;
-            border-radius: 8px;
-            transition: background-color 0.2s ease-in-out, transform 0.2s ease;
-            display: inline-block;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-special:hover {
-            background-color: #1d4ed8; /* A slightly darker blue on hover */
-            transform: scale(1.03);
-        }
-        .btn-special:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
-            transform: scale(1);
-        }
-        input[type="text"], input[type="password"], textarea {
-            background-color: transparent;
-            border: none;
-            color: #1a202c; /* Darker text for input */
-            text-align: center;
-            font-size: 1.25rem;
-            padding: 10px 0;
-            width: 100%;
-            max-width: 320px;
-            outline: none;
-            transition: border-color 0.2s ease-in-out;
-        }
-        input[type="text"], input[type="password"] {
-             border-bottom: 2px solid #3b82f6; /* Blue underline */
-        }
-        textarea {
-            border: 2px solid #3b82f6;
-            border-radius: 8px;
-            padding: 15px;
-            min-height: 150px;
-            text-align: left;
-        }
-        input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
-            border-color: #2563eb;
-        }
-        ::placeholder {
-            color: #6b7280;
-        }
-        .text-right { text-align: right; width: 100%; }
-        .text-left-aligned { text-align: left; margin-left: auto; margin-right: auto; }
-        .wave-heading { cursor: pointer; position: relative; }
-        .wave-letter { display: inline-block; position: relative; color: #1a202c; transition: color 0.4s ease, transform 0.4s ease; }
-        .wave-letter.hovered { color: #2563eb; transform: translateY(-5px); }
-        #piano-container { opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.95); transition: opacity 0.4s ease, transform 0.4s ease; margin-top: 20px; }
-        #piano-container.visible { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
-        #notes-display { font-family: monospace; font-size: 1.25rem; color: #374151; margin-bottom: 10px; }
-        #keyboard { display: flex; position: relative; justify-content: center; }
-        .key { border: 1px solid #6b7280; border-radius: 0 0 5px 5px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; font-weight: bold; color: #4b5563; transition: all 0.1s ease-out; }
-        .key.white { width: 40px; height: 150px; background-color: #fff; z-index: 1; }
-        .key.black { width: 24px; height: 90px; background-color: #374151; z-index: 2; margin-left: -12px; margin-right: -12px; color: white; }
-        .key.highlight { background-color: #60a5fa; color: white; }
-        .key.playing { background: #f472b6; transform: translateY(3px); box-shadow: 0 0 10px #f472b6, inset 0 -1px 0 rgba(0,0,0,0.1); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Very Happy Birthday Ruta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Lobster&display=swap" rel="stylesheet">
+    <!-- LeafletJS for the map --><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        .display-font {
+            font-family: 'Lobster', cursive;
+        }
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #e0f2f7; /* Light blueish background */
+            color: #1a202c; /* Darker text for contrast */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="party" width="100" height="100" patternUnits="userSpaceOnUse"><path fill="%23d0e9f1" d="M10 0 L10 10 L0 10 L0 0 Z M30 20 L30 30 L20 30 L20 20 Z M50 40 L50 50 L40 50 L40 40 Z M70 60 L70 70 L60 70 L60 60 Z M90 80 L90 90 L80 90 L80 80 Z M10 90 L10 100 L0 100 L0 90 Z M30 70 L30 80 L20 80 L20 70 Z M50 50 L50 60 L40 60 L40 50 Z M70 30 L70 40 L60 40 L60 30 Z M90 10 L90 20 L80 20 L80 10 Z" /><circle fill="%23ffeb3b" cx="15" cy="5" r="3"/><circle fill="%23f48fb1" cx="35" cy="25" r="3"/><circle fill="%23a7ffeb" cx="55" cy="45" r="3"/><circle fill="%238c9eff" cx="75" cy="65" r="3"/><circle fill="%23b39ddb" cx="95" cy="85" r="3"/></pattern></defs><rect width="100%" height="100%" fill="url(%23party)"/></svg>');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+        .section-container {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            max-width: 768px; /* Slightly wider for better text flow */
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white card for readability */
+            padding: 40px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        .fade-in {
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-special {
+            background-color: #2563eb; /* A strong blue */
+            color: #ffffff;
+            font-weight: 500;
+            padding: 12px 28px;
+            border-radius: 8px;
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-special:hover {
+            background-color: #1d4ed8; /* A slightly darker blue on hover */
+            transform: scale(1.03);
+        }
+        .btn-special:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+        input[type="text"], input[type="password"], textarea {
+            background-color: transparent;
+            border: none;
+            color: #1a202c; /* Darker text for input */
+            text-align: center;
+            font-size: 1.25rem;
+            padding: 10px 0;
+            width: 100%;
+            max-width: 320px;
+            outline: none;
+            transition: border-color 0.2s ease-in-out;
+        }
+        input[type="text"], input[type="password"] {
+             border-bottom: 2px solid #3b82f6; /* Blue underline */
+        }
+        textarea {
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 150px;
+            text-align: left;
+        }
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+            border-color: #2563eb;
+        }
+        ::placeholder {
+            color: #6b7280;
+        }
+        .text-right { text-align: right; width: 100%; }
+        .text-left-aligned { text-align: left; margin-left: auto; margin-right: auto; }
+        .wave-heading { cursor: pointer; position: relative; }
+        .wave-letter { display: inline-block; position: relative; color: #1a202c; transition: color 0.4s ease, transform 0.4s ease; }
+        .wave-letter.hovered { color: #2563eb; transform: translateY(-5px); }
+        #piano-container { opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.95); transition: opacity 0.4s ease, transform 0.4s ease; margin-top: 20px; }
+        #piano-container.visible { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+        #notes-display { font-family: monospace; font-size: 1.25rem; color: #374151; margin-bottom: 10px; }
+        #keyboard { display: flex; position: relative; justify-content: center; }
+        .key { border: 1px solid #6b7280; border-radius: 0 0 5px 5px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; font-weight: bold; color: #4b5563; transition: all 0.1s ease-out; }
+        .key.white { width: 40px; height: 150px; background-color: #fff; z-index: 1; }
+        .key.black { width: 24px; height: 90px; background-color: #374151; z-index: 2; margin-left: -12px; margin-right: -12px; color: white; }
+        .key.highlight { background-color: #60a5fa; color: white; }
+        .key.playing { background: #f472b6; transform: translateY(3px); box-shadow: 0 0 10px #f472b6, inset 0 -1px 0 rgba(0,0,0,0.1); }
 
-        /* Celebration Explosion Styles */
-        #celebration-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
-        .particle { position: absolute; }
-        .balloon { width: 40px; height: 50px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: rise-up 4s ease-out forwards; }
-        .confetti { width: 10px; height: 10px; animation: fall-and-spin 4s linear forwards; }
-        @keyframes rise-up {
-            from { transform: translateY(110vh) rotate(0); opacity: 1; }
-            to { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
-        }
-        @keyframes fall-and-spin {
-            from { transform: translateY(-10vh) rotate(0); opacity: 1; }
-            to { transform: translateY(110vh) rotate(1080deg); opacity: 0; }
-        }
-        
-        /* Map Section Styles */
-        .fullscreen-section {
-            width: 100vw;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-        .leaflet-popup-content-wrapper {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 3px 14px rgba(0,0,0,0.4);
-        }
-        .leaflet-popup-content {
-            margin: 15px;
-            text-align: center;
-        }
-        .range-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #d1d5db;
-            outline: none;
-            opacity: 0.7;
-            transition: opacity .2s;
-        }
-        .range-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #2563eb;
-            cursor: pointer;
-        }
+        /* Celebration Explosion Styles */
+        #celebration-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+        .particle { position: absolute; }
+        .balloon { width: 40px; height: 50px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: rise-up 4s ease-out forwards; }
+        .confetti { width: 10px; height: 10px; animation: fall-and-spin 4s linear forwards; }
+        @keyframes rise-up {
+            from { transform: translateY(110vh) rotate(0); opacity: 1; }
+            to { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+        @keyframes fall-and-spin {
+            from { transform: translateY(-10vh) rotate(0); opacity: 1; }
+            to { transform: translateY(110vh) rotate(1080deg); opacity: 0; }
+        }
+        
+        /* Map Section Styles */
+        .fullscreen-section {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        .leaflet-popup-content-wrapper {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+        }
+        .leaflet-popup-content {
+            margin: 15px;
+            text-align: center;
+        }
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #d1d5db;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2563eb;
+            cursor: pointer;
+        }
 
-        /* Lyrics Puzzle Styles */
-         #lyrics-section.section-container {
-            position: relative;
-            overflow: hidden;
-            background-color: #1a202c;
-            padding: 0;
-        }
-        .lyrics-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            filter: blur(4px) brightness(0.4);
-            transform: scale(1.1);
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 8px;
-        }
-        .lyrics-bg img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .puzzle-content-overlay {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-        }
+        /* Lyrics Puzzle Styles */
+         #lyrics-section.section-container {
+            position: relative;
+            overflow: hidden;
+            background-color: #1a202c;
+            padding: 0;
+        }
+        .lyrics-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            filter: blur(4px) brightness(0.4);
+            transform: scale(1.1);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .lyrics-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .puzzle-content-overlay {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
 
-        #lyrics-section input[type="text"] {
-            color: #ffffff;
-            border-bottom-color: #60a5fa;
-        }
-        #lyrics-section input[type="text"]:focus {
-            border-bottom-color: #ffffff;
-        }
-        #lyrics-section ::placeholder {
-            color: #a0aec0;
-        }
+        #lyrics-section input[type="text"] {
+            color: #ffffff;
+            border-bottom-color: #60a5fa;
+        }
+        #lyrics-section input[type="text"]:focus {
+            border-bottom-color: #ffffff;
+        }
+        #lyrics-section ::placeholder {
+            color: #a0aec0;
+        }
 
-        /* Book Cover Puzzle Styles */
-        #book-cover-img {
-            filter: blur(4px); /* Lowered blur to 4px */
-            transition: filter 0.3s ease-in-out;
-        }
-        #book-cover-img.unblurred {
-            filter: blur(0); /* Remove blur when answer is correct */
-        }
-        
-        /* Gossip word count styles */
-        #word-count {
-            color: #ef4444; /* Red */
-            font-weight: bold;
-        }
-        #word-count.met {
-            color: #22c55e; /* Green */
-        }
-    </style>
+        /* Book Cover Puzzle Styles */
+        #book-cover-img {
+            filter: blur(4px); /* Lowered blur to 4px */
+            transition: filter 0.3s ease-in-out;
+        }
+        #book-cover-img.unblurred {
+            filter: blur(0); /* Remove blur when answer is correct */
+        }
+        
+        /* Gossip word count styles */
+        #word-count {
+            color: #ef4444; /* Red */
+            font-weight: bold;
+        }
+        #word-count.met {
+            color: #22c55e; /* Green */
+        }
+    </style>
 </head>
 <body class="p-4">
-    <div id="celebration-container"></div>
-    <div id="main-content">
-        <div id="welcome-section" class="section-container fade-in">
-            <h1 id="wave-heading" class="display-font text-5xl md:text-7xl font-normal mb-4">Happy Birthday Ruta</h1>
-            <div id="piano-container">
-                <div id="notes-display">C C D C F E</div>
-                <div id="keyboard">
-                    <div class="key white" data-note="C">C</div>
-                    <div class="key black" data-note="C#"></div>
-                    <div class="key white" data-note="D">D</div>
-                    <div class="key black" data-note="D#"></div>
-                    <div class="key white" data-note="E">E</div>
-                    <div class="key white" data-note="F">F</div>
-                    <div class="key black" data-note="F#"></div>
-                    <div class="key white" data-note="G">G</div>
-                    <div class="key black" data-note="G#"></div>
-                    <div class="key white" data-note="A">A</div>
-                    <div class="key black" data-note="A#"></div>
-                    <div class="key white" data-note="B">B</div>
-                </div>
-            </div>
-            <p class="text-lg italic text-gray-500 mt-10 mb-4">Hover over the text for a clue. What does CCDCFE mean in piano terms?</p>
-            <input type="password" id="password-input" class="mb-8" placeholder="Enter the secret word">
-            <button id="start-btn" class="btn-special text-lg">Submit</button>
-        </div>
+    <div id="celebration-container"></div>
+    <div id="main-content">
+        <div id="welcome-section" class="section-container fade-in">
+            <h1 id="wave-heading" class="display-font text-5xl md:text-7xl font-normal mb-4">Happy Birthday Ruta</h1>
+            <div id="piano-container">
+                <div id="notes-display">C C D C F E</div>
+                <div id="keyboard">
+                    <div class="key white" data-note="C">C</div>
+                    <div class="key black" data-note="C#"></div>
+                    <div class="key white" data-note="D">D</div>
+                    <div class="key black" data-note="D#"></div>
+                    <div class="key white" data-note="E">E</div>
+                    <div class="key white" data-note="F">F</div>
+                    <div class="key black" data-note="F#"></div>
+                    <div class="key white" data-note="G">G</div>
+                    <div class="key black" data-note="G#"></div>
+                    <div class="key white" data-note="A">A</div>
+                    <div class="key black" data-note="A#"></div>
+                    <div class="key white" data-note="B">B</div>
+                </div>
+            </div>
+            <p class="text-lg italic text-gray-500 mt-10 mb-4">Hover over the text for a clue. What does CCDCFE mean in piano terms?</p>
+            <input type="password" id="password-input" class="mb-8" placeholder="Enter the secret word">
+            <button id="start-btn" class="btn-special text-lg">Submit</button>
+        </div>
 
-        <div id="map-section" class="hidden fullscreen-section">
-            <div class="absolute top-0 left-0 w-full p-4 text-center bg-white/80 backdrop-blur-sm z-[1001]">
-                <h2 class="text-2xl font-bold">TASK 1 : Select one of the following</h2>
-            </div>
-            <div id="map"></div>
-        </div>
+        <div id="map-section" class="hidden fullscreen-section">
+            <div class="absolute top-0 left-0 w-full p-4 text-center bg-white/80 backdrop-blur-sm z-[1001]">
+                <h2 class="text-2xl font-bold">TASK 1 : Select one of the following</h2>
+            </div>
+            <div id="map"></div>
+        </div>
 
-        <div id="lyrics-section" class="hidden section-container">
-            <div class="lyrics-bg">
-                <img src="https://placehold.co/600x400/333/FFF?text=reputation" alt="Hint image 1">
-                <img src="https://placehold.co/600x400/555/FFF?text=1989" alt="Hint image 2">
-                <img src="https://placehold.co/600x400/222/FFF?text=Midnights" alt="Hint image 3">
-                <img src="https://placehold.co/600x400/444/FFF?text=Lover" alt="Hint image 4">
-            </div>
-            <div class="puzzle-content-overlay">
-                <h2 class="text-3xl font-bold text-white mb-4">TASK 2: Name That Song!</h2>
-                <div class="text-gray-200 mb-8 italic text-center max-w-md">
-                    <p>'Cause my baby's fit like a daydream, walkin' with his head down, I'm the one he's walkin' to...</p>
-                    <p class="mt-2">My baby's fly like a jet stream, high above the whole scene, loves me like I'm brand new...</p>
-                </div>
-                <input type="text" id="lyrics-input" placeholder="Enter song title...">
-                <p id="lyrics-error" class="text-red-400 mt-4 h-6"></p>
-                <button id="lyrics-submit-btn" class="btn-special mt-8">Submit Answer</button>
-            </div>
-        </div>
+        <div id="lyrics-section" class="hidden section-container">
+            <div class="lyrics-bg">
+                <img src="https://placehold.co/600x400/333/FFF?text=reputation" alt="Hint image 1">
+                <img src="https://placehold.co/600x400/555/FFF?text=1989" alt="Hint image 2">
+                <img src="https://placehold.co/600x400/222/FFF?text=Midnights" alt="Hint image 3">
+                <img src="https://placehold.co/600x400/444/FFF?text=Lover" alt="Hint image 4">
+            </div>
+            <div class="puzzle-content-overlay">
+                <h2 class="text-3xl font-bold text-white mb-4">TASK 2: Mother is mothering!</h2>
+                <div class="text-gray-200 mb-8 italic text-center max-w-md">
+                    
+                    <p> Taylor ji ka recently happy engagement hua hai, toh ussi khushi mein guess which song is this ( PS : your favourite it is or was ) ohh and also first guess galat karo please </p><br><br>
+                    <p>'Cause my baby's fit like a daydream, walkin' with his head down, I'm the one he's walkin' to...</p>
+                    <p class="mt-2">My baby's fly like a jet stream, high above the whole scene, loves me like I'm brand new...</p>
+                </div>
+                <input type="text" id="lyrics-input" placeholder="Enter song title...">
+                <p id="lyrics-error" class="text-red-400 mt-4 h-6"></p>
+                <button id="lyrics-submit-btn" class="btn-special mt-8">Submit Answer</button>
+            </div>
+        </div>
 
-        <div id="book-section" class="hidden section-container">
-            <h2 class="text-3xl font-bold mb-4">TASK 3: Guess the Book!</h2>
-            <img id="book-cover-img" src="https://m.media-amazon.com/images/I/81IzbD2IiIL.jpg" alt="Book cover of The Kite Runner (blurred)" class="rounded-lg shadow-lg mb-6 h-64">
-            <p class="text-gray-600 mb-8 max-w-md">Based on the image (ignore any blurred text!), what do you think the title of this book is?</p>
-            <input type="text" id="book-title-input" placeholder="Book Title...">
-            <p id="book-error" class="text-red-400 mt-4 h-6"></p>
-            <button id="book-submit-btn" class="btn-special mt-8">Submit Guess</button>
-        </div>
+        <div id="book-section" class="hidden section-container">
+            <h2 class="text-3xl font-bold mb-4">TASK 3: Guess Karooo!</h2>
+            <img id="book-cover-img" src="https://m.media-amazon.com/images/I/81IzbD2IiIL.jpg" alt="Book cover of The Kite Runner (blurred)" class="rounded-lg shadow-lg mb-6 h-64">
+            <p class="text-gray-600 mb-8 max-w-md">They say never to judge a book by its cover (but you did judge me) but ussi spirit mein guess which book this is ? </p>
+            <input type="text" id="book-title-input" placeholder="Book Title...">
+            <p id="book-error" class="text-red-400 mt-4 h-6"></p>
+            <button id="book-submit-btn" class="btn-special mt-8">Submit Guess</button>
+        </div>
 
-        <div id="gossip-section" class="hidden section-container">
-            <h2 class="text-3xl font-bold mb-4">TASK 4: Spill the Tea!</h2>
-            <p class="text-gray-600 mb-6 max-w-md">Alright, birthday girl. The price of admission to the final stage is the juiciest piece of gossip you've heard recently. Don't hold back!</p>
-            <textarea id="gossip-textarea" class="w-full max-w-lg" placeholder="The tea is..."></textarea>
-            <p id="word-count" class="mt-2 text-sm">0 / 100 words</p>
-            <button id="gossip-submit-btn" class="btn-special mt-6" disabled>Submit Gossip</button>
-        </div>
+        <div id="gossip-section" class="hidden section-container">
+            <h2 class="text-3xl font-bold mb-4">TASK 4: Spill the Teaaaaaa !! </h2>
+            <p class="text-gray-600 mb-6 max-w-md">Alright, birthday girl. The price of admission to the final stage is the juiciest piece of gossip you've heard recently. Don't hold back!</p>
+            <textarea id="gossip-textarea" class="w-full max-w-lg" placeholder="The tea is..."></textarea>
+            <p id="word-count" class="mt-2 text-sm">0 / 100 words</p>
+            <button id="gossip-submit-btn" class="btn-special mt-6" disabled>Submit Gossip</button>
+        </div>
 
-        <div id="memory-section" class="hidden section-container">
-            <h2 class="text-3xl font-bold mb-4">FINAL TASK: A Walk Down Memory Lane</h2>
-            <p class="text-gray-600 mb-8">Share one of your favourite memories with me!</p>
-            <form id="memory-form" action="https://formspree.io/f/YOUR_UNIQUE_ID" method="POST" class="w-full flex flex-col items-center">
-                <textarea id="memory-textarea" name="memory" class="w-full max-w-lg" placeholder="Type your memory here..."></textarea>
-                <button type="submit" class="btn-special mt-8">Submit Memory</button>
-            </form>
-        </div>
+        <div id="memory-section" class="hidden section-container">
+            <h2 class="text-3xl font-bold mb-4">FINAL TASK: A Walk Down Memory Lane</h2>
+            <p class="text-gray-600 mb-8">Share one of your favourite memories with me!</p>
+            <form id="memory-form" action="https://formspree.io/f/YOUR_UNIQUE_ID" method="POST" class="w-full flex flex-col items-center">
+                <textarea id="memory-textarea" name="memory" class="w-full max-w-lg" placeholder="Type your memory here..."></textarea>
+                <button type="submit" class="btn-special mt-8">Submit Memory</button>
+            </form>
+        </div>
 
-        <div id="final-reveal-section" class="hidden section-container">
-             <h1 class="display-font text-5xl md-text-6xl font-normal text-blue-700 mb-6">Adventure Complete</h1>
-             <div class="text-left-aligned text-gray-700 text-lg space-y-5 max-w-lg">
-                <p>Happy Birthday to a truly remarkable person It is a gift to know you and call you a friend</p>
-                <p>May your year ahead be filled with the same joy and inspiration you bring to everyone around you You deserve every success and happiness</p>
-                <p class="font-bold text-right mt-8">- Your Friend</p>
-              </div>
-        </div>
-    </div>
+        <div id="final-reveal-section" class="hidden section-container">
+             <h1 class="display-font text-5xl md-text-6xl font-normal text-blue-700 mb-6">Adventure Complete</h1>
+             <div class="text-left-aligned text-gray-700 text-lg space-y-5 max-w-lg">
+                <p>Happy Birthday sweet chilli 🌶 , It is sachi muchi a gift to know you and call you a friend.Sorry for making you do tasks on your birthday hehe. The last year with you was absolutely wonderful on every scale possible.</p>
+                <p>I may have gone from a 9 to 4 and now back to 9 😂 but I wouldn't have wanted it any way else, lest the memories we shared wouldn't have transpired. The way you have grown as a person is truly special, killing the absolute shit as an intern, convenor, student and as a person.</p>
+                <p>I hope you find what it is you are seeking for. Thank you for being in my life, tis the best gift I have ever hath </p>
+                <p>May your year ahead be filled with the same joy and inspiration you bring to everyone around you. You deserve every success and happiness ♥ </p>
+                <p class="font-bold text-right mt-8">- Your Friend</p>
+              </div>
+        </div>
+    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const heading = document.getElementById('wave-heading');
-            const pianoContainer = document.getElementById('piano-container');
-            const startBtn = document.getElementById('start-btn');
-            const memoryForm = document.getElementById('memory-form');
-            const lyricsSubmitBtn = document.getElementById('lyrics-submit-btn');
-            const bookSubmitBtn = document.getElementById('book-submit-btn');
-            const gossipSubmitBtn = document.getElementById('gossip-submit-btn');
-            const gossipTextarea = document.getElementById('gossip-textarea');
-            const wordCountDisplay = document.getElementById('word-count');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const heading = document.getElementById('wave-heading');
+            const pianoContainer = document.getElementById('piano-container');
+            const startBtn = document.getElementById('start-btn');
+            const memoryForm = document.getElementById('memory-form');
+            const lyricsSubmitBtn = document.getElementById('lyrics-submit-btn');
+            const bookSubmitBtn = document.getElementById('book-submit-btn');
+            const gossipSubmitBtn = document.getElementById('gossip-submit-btn');
+            const gossipTextarea = document.getElementById('gossip-textarea');
+            const wordCountDisplay = document.getElementById('word-count');
 
-            
-            if (!heading || !pianoContainer || !startBtn || !memoryForm || !lyricsSubmitBtn || !bookSubmitBtn || !gossipSubmitBtn) return;
+            
+            if (!heading || !pianoContainer || !startBtn || !memoryForm || !lyricsSubmitBtn || !bookSubmitBtn || !gossipSubmitBtn) return;
 
-            // ... (piano and wave logic remains the same) ...
-            const synth = new Tone.Synth().toDestination();
-            const birthdayMelody = [
-                { note: 'C4', duration: '4n' }, { note: 'C4', duration: '4n' },
-                { note: 'D4', duration: '4n' }, { note: 'C4', duration: '4n' },
-                { note: 'F4', duration: '4n' }, { note: 'E4', duration: '2n' }
-            ];
-            const sequence = new Tone.Sequence((time, event) => {
-                synth.triggerAttackRelease(event.note, event.duration, time);
-                const noteLetter = event.note.slice(0, -1);
-                const keyElement = document.querySelector(`.key[data-note='${noteLetter}']`);
-                if (keyElement) {
-                    keyElement.classList.add('playing');
-                    Tone.Transport.scheduleOnce(() => keyElement.classList.remove('playing'), time + Tone.Time(event.duration).toSeconds() - 0.05);
-                }
-            }, birthdayMelody).start(0);
-            const text = heading.textContent;
-            heading.innerHTML = '';
-            text.split('').forEach(char => {
-                const span = document.createElement('span');
-                span.className = 'wave-letter';
-                span.innerHTML = char === ' ' ? '&nbsp;' : char;
-                heading.appendChild(span);
-            });
-            const letters = heading.querySelectorAll('.wave-letter');
-            const displayedNotes = ['C', 'D', 'E', 'F'];
-            const keys = document.querySelectorAll('.key');
-            keys.forEach(key => {
-                if (displayedNotes.includes(key.dataset.note)) key.classList.add('highlight');
-            });
-            heading.addEventListener('mouseenter', () => {
-                letters.forEach((letter, index) => setTimeout(() => letter.classList.add('hovered'), index * 70));
-                pianoContainer.classList.add('visible');
-                if (Tone.context.state === 'running') Tone.Transport.start();
-            });
-            heading.addEventListener('mouseleave', () => {
-                letters.forEach((letter, index) => setTimeout(() => letter.classList.remove('hovered'), index * 70));
-                pianoContainer.classList.remove('visible');
-                Tone.Transport.stop();
-                Tone.Transport.position = 0;
-            });
-
-
-            startBtn.addEventListener('click', () => {
-                if (Tone.context.state !== 'running') Tone.start();
-                createCelebrationExplosion();
-                setTimeout(() => {
-                    showSection(mapSection);
-                    initMap();
-                }, 1500);
-            });
-
-            // Handle Lyrics Puzzle Submission
-            lyricsSubmitBtn.addEventListener('click', () => {
-                const lyricsInput = document.getElementById('lyrics-input');
-                const lyricsError = document.getElementById('lyrics-error');
-                const userAnswer = lyricsInput.value.trim().toLowerCase();
-                if (userAnswer === 'call it what you want') {
-                    showSection(bookSection);
-                } else {
-                    lyricsError.textContent = "Not quite! Try again, Swiftie!";
-                }
-            });
-
-            // Handle Book Puzzle Submission
-            bookSubmitBtn.addEventListener('click', () => {
-                const bookTitleInput = document.getElementById('book-title-input');
-                const bookError = document.getElementById('book-error');
-                const bookCoverImg = document.getElementById('book-cover-img');
-                const userAnswer = bookTitleInput.value.trim().toLowerCase();
-
-                if (userAnswer.includes('the kite runner') || userAnswer.includes('kiterunner')) {
-                    bookCoverImg.classList.add('unblurred');
-                    bookError.textContent = "That's correct! Great job!";
-                    setTimeout(() => {
-                        showSection(gossipSection); // Go to new Gossip puzzle
-                    }, 1500);
-                } else {
-                    bookError.textContent = "Hmm, not quite. Take another look!";
-                }
-            });
-
-            // Handle Gossip Word Count
-            gossipTextarea.addEventListener('input', () => {
-                const text = gossipTextarea.value.trim();
-                const words = text.split(/\s+/).filter(word => word.length > 0);
-                const wordCount = words.length;
-
-                wordCountDisplay.textContent = `${wordCount} / 100 words`;
-
-                if (wordCount >= 100) {
-                    gossipSubmitBtn.disabled = false;
-                    wordCountDisplay.classList.add('met');
-                } else {
-                    gossipSubmitBtn.disabled = true;
-                    wordCountDisplay.classList.remove('met');
-                }
-            });
-
-            // Handle Gossip Submission
-            gossipSubmitBtn.addEventListener('click', () => {
-                const gossipText = gossipTextarea.value;
-                const form = document.getElementById('memory-form');
-                
-                let gossipInput = form.querySelector('input[name="gossip"]');
-                if (!gossipInput) {
-                    gossipInput = document.createElement('input');
-                    gossipInput.type = 'hidden';
-                    gossipInput.name = 'gossip';
-                    form.appendChild(gossipInput);
-                }
-                gossipInput.value = gossipText;
-
-                showSection(memorySection);
-            });
+            // ... (piano and wave logic remains the same) ...
+            const synth = new Tone.Synth().toDestination();
+            const birthdayMelody = [
+                { note: 'C4', duration: '4n' }, { note: 'C4', duration: '4n' },
+                { note: 'D4', duration: '4n' }, { note: 'C4', duration: '4n' },
+                { note: 'F4', duration: '4n' }, { note: 'E4', duration: '2n' }
+            ];
+            const sequence = new Tone.Sequence((time, event) => {
+                synth.triggerAttackRelease(event.note, event.duration, time);
+                const noteLetter = event.note.slice(0, -1);
+                const keyElement = document.querySelector(`.key[data-note='${noteLetter}']`);
+                if (keyElement) {
+                    keyElement.classList.add('playing');
+                    Tone.Transport.scheduleOnce(() => keyElement.classList.remove('playing'), time + Tone.Time(event.duration).toSeconds() - 0.05);
+                }
+            }, birthdayMelody).start(0);
+            const text = heading.textContent;
+            heading.innerHTML = '';
+            text.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.className = 'wave-letter';
+                span.innerHTML = char === ' ' ? '&nbsp;' : char;
+                heading.appendChild(span);
+            });
+            const letters = heading.querySelectorAll('.wave-letter');
+            const displayedNotes = ['C', 'D', 'E', 'F'];
+            const keys = document.querySelectorAll('.key');
+            keys.forEach(key => {
+                if (displayedNotes.includes(key.dataset.note)) key.classList.add('highlight');
+            });
+            heading.addEventListener('mouseenter', () => {
+                letters.forEach((letter, index) => setTimeout(() => letter.classList.add('hovered'), index * 70));
+                pianoContainer.classList.add('visible');
+                if (Tone.context.state === 'running') Tone.Transport.start();
+            });
+            heading.addEventListener('mouseleave', () => {
+                letters.forEach((letter, index) => setTimeout(() => letter.classList.remove('hovered'), index * 70));
+                pianoContainer.classList.remove('visible');
+                Tone.Transport.stop();
+                Tone.Transport.position = 0;
+            });
 
 
-            // Handle the final form submission
-            memoryForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                }).then(response => {
-                    showSection(finalRevealSection);
-                }).catch(error => {
-                    console.error('Form submission error:', error);
-                    showSection(finalRevealSection);
-                });
-            });
-        });
+            startBtn.addEventListener('click', () => {
+                if (Tone.context.state !== 'running') Tone.start();
+                createCelebrationExplosion();
+                setTimeout(() => {
+                    showSection(mapSection);
+                    initMap();
+                }, 1500);
+            });
 
-        function createCelebrationExplosion() {
-            const container = document.getElementById('celebration-container');
-            const particleCount = 150;
-            const colors = ['#f472b6', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9'];
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                const isBalloon = Math.random() > 0.6;
-                
-                if (isBalloon) {
-                    particle.classList.add('balloon');
-                } else {
-                    particle.classList.add('confetti');
-                    particle.style.transform = `rotate(${Math.random() * 360}deg)`;
-                }
-                
-                particle.style.left = `${Math.random() * 100}vw`;
-                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.animationDuration = `${Math.random() * 2 + 3}s`;
-                particle.style.animationDelay = `${Math.random() * 0.5}s`;
-                
-                container.appendChild(particle);
-                setTimeout(() => particle.remove(), 5000);
-            }
-        }
+            // Handle Lyrics Puzzle Submission
+            lyricsSubmitBtn.addEventListener('click', () => {
+                const lyricsInput = document.getElementById('lyrics-input');
+                const lyricsError = document.getElementById('lyrics-error');
+                const userAnswer = lyricsInput.value.trim().toLowerCase();
+                if (userAnswer === 'call it what you want') {
+                    showSection(bookSection);
+                } else {
+                    lyricsError.textContent = "Not quite! Try again, Swiftie!";
+                }
+            });
 
-        const welcomeSection = document.getElementById('welcome-section');
-        const mapSection = document.getElementById('map-section');
-        const lyricsSection = document.getElementById('lyrics-section');
-        const bookSection = document.getElementById('book-section');
-        const gossipSection = document.getElementById('gossip-section');
-        const memorySection = document.getElementById('memory-section');
-        const finalRevealSection = document.getElementById('final-reveal-section');
-        
-        function showSection(sectionToShow) {
-            [welcomeSection, mapSection, lyricsSection, bookSection, gossipSection, memorySection, finalRevealSection].forEach(section => section.classList.add('hidden'));
-            sectionToShow.classList.remove('hidden');
-            sectionToShow.classList.add('fade-in');
-        }
+            // Handle Book Puzzle Submission
+            bookSubmitBtn.addEventListener('click', () => {
+                const bookTitleInput = document.getElementById('book-title-input');
+                const bookError = document.getElementById('book-error');
+                const bookCoverImg = document.getElementById('book-cover-img');
+                const userAnswer = bookTitleInput.value.trim().toLowerCase();
 
-        // --- Map Logic ---
-        let mapInitialized = false;
-        function initMap() {
-            if (mapInitialized) return;
-            mapInitialized = true;
-            
-            const map = L.map('map').setView([12.9716, 77.5946], 12);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            }).addTo(map);
+                if (userAnswer.includes('the kite runner') || userAnswer.includes('kiterunner')) {
+                    bookCoverImg.classList.add('unblurred');
+                    bookError.textContent = "That's correct! Great job!";
+                    setTimeout(() => {
+                        showSection(gossipSection); // Go to new Gossip puzzle
+                    }, 1500);
+                } else {
+                    bookError.textContent = "Hmm, not quite. Take another look!";
+                }
+            });
 
-            const locations = [
-                { lat: 12.9719, lng: 77.6412, name: 'Pizza', emoji: '🍕' }, // Indiranagar
-                { lat: 12.9121, lng: 77.6388, name: 'Dosa', emoji: '🥞' }, // HSR Layout
-                { lat: 12.9780, lng: 77.7516, name: 'Brewery', emoji: '🍻' }, // Whitefield
-                { lat: 12.9063, lng: 77.5858, name: 'Pasta', emoji: '🍝' }, // JP Nagar
-                { lat: 13.0076, lng: 77.5713, name: 'North Indian', emoji: '🍛' }, // Malleshwaram
-                { lat: 12.9730, lng: 77.5340, name: 'Bowling', emoji: '🎳' }, // Vijayanagar
-                { lat: 12.9592, lng: 77.6974, name: 'Go-Karting', emoji: '🏎️' }, // Marathahalli
-                { lat: 12.9750, lng: 77.6066, name: 'Karaoke', emoji: '🎤' }, // MG Road Area
-                { lat: 12.9350, lng: 77.5800, name: 'Bookstore Cafe', emoji: '📚' }, // Jayanagar/Basavanagudi Area
-                { lat: 12.9345, lng: 77.6267, name: 'Ice Cream', emoji: '🍦' }, // Koramangala
-            ];
-            
-            locations.forEach(loc => {
-                const customIcon = L.divIcon({
-                    html: `<div class="text-4xl">${loc.emoji}</div>`,
-                    className: 'bg-transparent border-none',
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 40],
-                    popupAnchor: [0, -40]
-                });
+            // Handle Gossip Word Count
+            gossipTextarea.addEventListener('input', () => {
+                const text = gossipTextarea.value.trim();
+                const words = text.split(/\s+/).filter(word => word.length > 0);
+                const wordCount = words.length;
 
-                const marker = L.marker([loc.lat, loc.lng], { icon: customIcon }).addTo(map);
-                
-                const popupContent = `
-                    <div class="p-2">
-                        <h3 class="text-lg font-bold mb-2">You chose ${loc.name}!</h3>
-                        <p class="mb-4">An excellent choice! Now, let's set a budget for this hypothetical birthday celebration.</p>
-                        <label for="budget" class="font-bold">Party Budget: <span id="budgetValue">₹5000</span></label>
-                        <input type="range" min="1000" max="10000" value="5000" class="range-slider mt-2" id="budget">
-                        <button class="btn-special w-full mt-4" id="confirm-treat-btn">Looks Good!</button>
-                    </div>
-                `;
-                marker.bindPopup(popupContent);
+                wordCountDisplay.textContent = `${wordCount} / 100 words`;
 
-                marker.on('popupopen', () => {
-                    const budgetSlider = document.getElementById('budget');
-                    const budgetValue = document.getElementById('budgetValue');
-                    if (budgetSlider && budgetValue) {
-                        budgetSlider.addEventListener('input', (e) => {
-                            budgetValue.textContent = `₹${e.target.value}`;
-                        });
-                    }
-                    document.getElementById('confirm-treat-btn').addEventListener('click', () => {
-                        const choice = loc.name;
-                        const budget = budgetValue.textContent;
-                        
-                        const form = document.getElementById('memory-form');
-                        let choiceInput = form.querySelector('input[name="choice"]');
-                        if (!choiceInput) {
-                            choiceInput = document.createElement('input');
-                            choiceInput.type = 'hidden';
-                            choiceInput.name = 'choice';
-                            form.appendChild(choiceInput);
-                        }
-                        choiceInput.value = choice;
-                        
-                        let budgetInput = form.querySelector('input[name="budget"]');
-                        if (!budgetInput) {
-                           budgetInput = document.createElement('input');
-                           budgetInput.type = 'hidden';
-                           budgetInput.name = 'budget';
-                           form.appendChild(budgetInput);
-                        }
-                        budgetInput.value = budget;
-                        
-                        showSection(lyricsSection);
-                    });
-                });
-            });
-        }
-    </script>
+                if (wordCount >= 100) {
+                    gossipSubmitBtn.disabled = false;
+                    wordCountDisplay.classList.add('met');
+                } else {
+                    gossipSubmitBtn.disabled = true;
+                    wordCountDisplay.classList.remove('met');
+                }
+            });
+
+            // Handle Gossip Submission
+            gossipSubmitBtn.addEventListener('click', () => {
+                const gossipText = gossipTextarea.value;
+                const form = document.getElementById('memory-form');
+                
+                let gossipInput = form.querySelector('input[name="gossip"]');
+                if (!gossipInput) {
+                    gossipInput = document.createElement('input');
+                    gossipInput.type = 'hidden';
+                    gossipInput.name = 'gossip';
+                    form.appendChild(gossipInput);
+                }
+                gossipInput.value = gossipText;
+
+                showSection(memorySection);
+            });
+
+
+            // Handle the final form submission
+            memoryForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                }).then(response => {
+                    showSection(finalRevealSection);
+                }).catch(error => {
+                    console.error('Form submission error:', error);
+                    showSection(finalRevealSection);
+                });
+            });
+        });
+
+        function createCelebrationExplosion() {
+            const container = document.getElementById('celebration-container');
+            const particleCount = 150;
+            const colors = ['#f472b6', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9'];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const isBalloon = Math.random() > 0.6;
+                
+                if (isBalloon) {
+                    particle.classList.add('balloon');
+                } else {
+                    particle.classList.add('confetti');
+                    particle.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }
+                
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = `${Math.random() * 2 + 3}s`;
+                particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 5000);
+            }
+        }
+
+        const welcomeSection = document.getElementById('welcome-section');
+        const mapSection = document.getElementById('map-section');
+        const lyricsSection = document.getElementById('lyrics-section');
+        const bookSection = document.getElementById('book-section');
+        const gossipSection = document.getElementById('gossip-section');
+        const memorySection = document.getElementById('memory-section');
+        const finalRevealSection = document.getElementById('final-reveal-section');
+        
+        function showSection(sectionToShow) {
+            [welcomeSection, mapSection, lyricsSection, bookSection, gossipSection, memorySection, finalRevealSection].forEach(section => section.classList.add('hidden'));
+            sectionToShow.classList.remove('hidden');
+            sectionToShow.classList.add('fade-in');
+        }
+
+        // --- Map Logic ---
+        let mapInitialized = false;
+        function initMap() {
+            if (mapInitialized) return;
+            mapInitialized = true;
+            
+            const map = L.map('map').setView([12.9716, 77.5946], 12);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            }).addTo(map);
+
+            const locations = [
+                { lat: 12.9719, lng: 77.6412, name: 'Pizza', emoji: '🍕' }, // Indiranagar
+                { lat: 12.9121, lng: 77.6388, name: 'Dosa', emoji: '🥞' }, // HSR Layout
+                { lat: 12.9780, lng: 77.7516, name: 'Brewery', emoji: '🍻' }, // Whitefield
+                { lat: 12.9063, lng: 77.5858, name: 'Pasta', emoji: '🍝' }, // JP Nagar
+                { lat: 13.0076, lng: 77.5713, name: 'North Indian', emoji: '🍛' }, // Malleshwaram
+                { lat: 12.9730, lng: 77.5340, name: 'Bowling', emoji: '🎳' }, // Vijayanagar
+                { lat: 12.9592, lng: 77.6974, name: 'Go-Karting', emoji: '🏎️' }, // Marathahalli
+                { lat: 12.9750, lng: 77.6066, name: 'Karaoke', emoji: '🎤' }, // MG Road Area
+                { lat: 12.9350, lng: 77.5800, name: 'Bookstore Cafe', emoji: '📚' }, // Jayanagar/Basavanagudi Area
+                { lat: 12.9345, lng: 77.6267, name: 'Ice Cream', emoji: '🍦' }, // Koramangala
+            ];
+            
+            locations.forEach(loc => {
+                const customIcon = L.divIcon({
+                    html: `<div class="text-4xl">${loc.emoji}</div>`,
+                    className: 'bg-transparent border-none',
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 40],
+                    popupAnchor: [0, -40]
+                });
+
+                const marker = L.marker([loc.lat, loc.lng], { icon: customIcon }).addTo(map);
+                
+                const popupContent = `
+                    <div class="p-2">
+                        <h3 class="text-lg font-bold mb-2">You chose ${loc.name}!</h3>
+                        <p class="mb-4">An excellent choice! Now, let's set a budget for this hypothetical birthday celebration.</p>
+                        <label for="budget" class="font-bold">Party Budget: <span id="budgetValue">₹5000</span></label>
+                        <input type="range" min="1000" max="10000" value="5000" class="range-slider mt-2" id="budget">
+                        <button class="btn-special w-full mt-4" id="confirm-treat-btn">Looks Good!</button>
+                    </div>
+                `;
+                marker.bindPopup(popupContent);
+
+                marker.on('popupopen', () => {
+                    const budgetSlider = document.getElementById('budget');
+                    const budgetValue = document.getElementById('budgetValue');
+                    if (budgetSlider && budgetValue) {
+                        budgetSlider.addEventListener('input', (e) => {
+                            budgetValue.textContent = `₹${e.target.value}`;
+                        });
+                    }
+                    document.getElementById('confirm-treat-btn').addEventListener('click', () => {
+                        const choice = loc.name;
+                        const budget = budgetValue.textContent;
+                        
+                        const form = document.getElementById('memory-form');
+                        let choiceInput = form.querySelector('input[name="choice"]');
+                        if (!choiceInput) {
+                            choiceInput = document.createElement('input');
+                            choiceInput.type = 'hidden';
+                            choiceInput.name = 'choice';
+                            form.appendChild(choiceInput);
+                        }
+                        choiceInput.value = choice;
+                        
+                        let budgetInput = form.querySelector('input[name="budget"]');
+                        if (!budgetInput) {
+                           budgetInput = document.createElement('input');
+                           budgetInput.type = 'hidden';
+                           budgetInput.name = 'budget';
+                           form.appendChild(budgetInput);
+                        }
+                        budgetInput.value = budget;
+                        
+                        showSection(lyricsSection);
+                    });
+                });
+            });
+        }
+    </script>
 </body>
 </html>
-
