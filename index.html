@@ -372,22 +372,40 @@
                 musicPrompt.style.display = 'none';
             });
 
-            // ... (piano and wave logic remains the same) ...
             const synth = new Tone.Synth().toDestination();
-            const birthdayMelody = [
-                { note: 'C4', duration: '4n' }, { note: 'C4', duration: '4n' },
-                { note: 'D4', duration: '4n' }, { note: 'C4', duration: '4n' },
-                { note: 'F4', duration: '4n' }, { note: 'E4', duration: '2n' }
-            ];
-            const sequence = new Tone.Sequence((time, event) => {
-                synth.triggerAttackRelease(event.note, event.duration, time);
-                const noteLetter = event.note.slice(0, -1);
+            
+            // Set a slower, more natural tempo
+            Tone.Transport.bpm.value = 95;
+
+            // Use Tone.Part for precise rhythmic control
+            const birthdayMelodyPart = new Tone.Part((time, value) => {
+                synth.triggerAttackRelease(value.note, value.duration, time);
+                
+                // Visual feedback for the note being played
+                const noteLetter = value.note.slice(0, -1);
                 const keyElement = document.querySelector(`.key[data-note='${noteLetter}']`);
                 if (keyElement) {
-                    keyElement.classList.add('playing');
-                    Tone.Transport.scheduleOnce(() => keyElement.classList.remove('playing'), time + Tone.Time(event.duration).toSeconds() - 0.05);
+                    // Schedule the visual press to happen exactly at the note's time
+                    Tone.Transport.scheduleOnce(() => {
+                        keyElement.classList.add('playing');
+                    }, time);
+                    // Schedule the release to happen just before the note ends
+                    Tone.Transport.scheduleOnce(() => {
+                        keyElement.classList.remove('playing');
+                    }, time + Tone.Time(value.duration).toSeconds() * 0.95);
                 }
-            }, birthdayMelody).start(0);
+            }, [
+                { time: '0:0', note: 'C4', duration: '8n' },
+                { time: '0:0.5', note: 'C4', duration: '8n' },
+                { time: '0:1', note: 'D4', duration: '4n' },
+                { time: '0:2', note: 'C4', duration: '4n' },
+                { time: '0:3', note: 'F4', duration: '4n' },
+                { time: '1:0', note: 'E4', duration: '2n' }
+            ]).start(0);
+
+            birthdayMelodyPart.loop = true;
+            birthdayMelodyPart.loopEnd = '1:2';
+
             const text = heading.textContent;
             heading.innerHTML = '';
             text.split('').forEach(char => {
